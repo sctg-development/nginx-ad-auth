@@ -60,6 +60,8 @@ jobs:
           id: getdate
           run: echo "::set-output name=getdate::$(date +'%Y.%m.%d-%H%M')"
         
+        - uses: actions/checkout@v4
+        
         - name: Create Release with gh
           env:
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
