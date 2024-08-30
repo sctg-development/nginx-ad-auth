@@ -1,3 +1,5 @@
+# Copyright (c) 2022-2024 Ronan LE MEILLAT
+# This program is licensed under the AGPLv3 license.
 # Use the official Go image as a parent image
 FROM golang:1.22-alpine AS builder
 
