@@ -60,8 +60,6 @@ jobs:
           id: getdate
           run: echo "::set-output name=getdate::$(date +'%Y.%m.%d-%H%M')"
         
-        - uses: actions/checkout@v4
-        
         - name: Create Release with gh
           env:
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -73,6 +71,4 @@ jobs:
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           run: |
-            for artifact in nginx-ad-auth-*; do
-                gh release upload v${{ steps.getdate.outputs.getdate }} $artifact/*
-            done
+            gh release upload v${{ steps.getdate.outputs.getdate }} *
