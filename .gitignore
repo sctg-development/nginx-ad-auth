@@ -30,9 +30,5 @@ vendor/
 *.cover
 *.cov
 
-# Les fichiers de modules Go
-go.sum
-go.mod
-
 # Les fichiers spécifiques à macOS
 .DS_Store
