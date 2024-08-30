@@ -73,4 +73,5 @@ jobs:
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           run: |
+            ls -lR
             gh release upload v${{ steps.getdate.outputs.getdate }} *
