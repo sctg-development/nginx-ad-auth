@@ -22,6 +22,9 @@ var (
 	mailServerPort int
 )
 
+// init initializes the application by parsing command line flags and checking environment variables.
+// It sets the values for port, ldapURI, ldapBase, adDomain, mailServer, and mailServerPort.
+// If any of these values are missing or invalid, it logs a fatal error.
 func init() {
 	flag.IntVar(&port, "port", 8080, "Port to listen on")
 	flag.StringVar(&ldapURI, "ldap-uri", "", "LDAP URI")
@@ -61,6 +64,13 @@ func main() {
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), nil))
 }
 
+// authHandler is a function that handles authentication requests.
+// It takes in an http.ResponseWriter and an http.Request as parameters.
+// The function retrieves the user, password, and protocol from the request headers.
+// If either the user or password is empty, it returns an "Auth-Status: No login or password" error response.
+// If the user authentication fails, it returns an "Auth-Status: Invalid login or password" error response.
+// The function determines the authentication port based on the protocol and sets the appropriate headers.
+// Finally, it sets the "Auth-Status", "Auth-Server", and "Auth-Port" headers and writes a successful response.
 func authHandler(w http.ResponseWriter, r *http.Request) {
 	user := r.Header.Get("Auth-User")
 	pass := r.Header.Get("Auth-Pass")
@@ -98,6 +108,14 @@ func authHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+// authenticateUser is a function that authenticates a user against an Active Directory server.
+// It takes a username and password as parameters and returns a boolean value indicating whether the authentication was successful or not, along with an error if any.
+// The function establishes a connection with the LDAP server using the specified ldapURI and binds the user's credentials.
+// It then performs a search in the LDAP directory to check if the user exists.
+// The search is based on the sAMAccountName attribute, which is the username attribute in Active Directory.
+// If the search returns exactly one entry, it means the user exists and the function returns true.
+// Otherwise, it returns false.
+// If there is any error during the authentication process, it is returned as an error.
 func authenticateUser(username, password string) (bool, error) {
 	l, err := ldap.DialURL(ldapURI)
 	if err != nil {
