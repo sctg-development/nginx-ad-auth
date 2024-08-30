@@ -1,0 +1,38 @@
+# Les binaires générés
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+
+# Les répertoires de build
+_build/
+bin/
+out/
+nginx-ad-auth
+
+# Les fichiers de dépendances
+vendor/
+
+# Les fichiers de configuration de l'IDE
+.vscode/
+.idea/
+
+# Les fichiers de logs
+*.log
+
+# Les fichiers de cache
+*.cache
+*.tmp
+
+# Les fichiers de test coverage
+*.cover
+*.cov
+
+# Les fichiers de modules Go
+go.sum
+go.mod
+
+# Les fichiers spécifiques à macOS
+.DS_Store
