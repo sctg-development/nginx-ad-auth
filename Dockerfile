@@ -14,6 +14,7 @@ RUN go mod download
 
 # Copy the source code
 COPY *.go ./
+COPY not-found.html ./
 
 # Build the application
 RUN CGO_ENABLED=0 GOOS=linux go build -o nginx-ad-auth
