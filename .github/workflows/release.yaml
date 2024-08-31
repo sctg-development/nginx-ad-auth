@@ -119,8 +119,6 @@ jobs:
 
       - name: Build package for ${{ matrix.job.name }} arch
         run: |
-          ls -lR
-          export VERSION=$(cat version/version)
           echo "Building package for ${{ matrix.job.name }} arch with version $VERSION"
           cp -v linux-${{ matrix.job.name }}/* debian-build/${{ matrix.job.name }}/bin/nginx-ad-auth
           chmod -v a+x debian-build/${{ matrix.job.name }}/bin/*
@@ -133,7 +131,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          export VERSION=$(cat version)
-          gh release upload v$VERSION debian-build/rustdesk-server-hbbr_*_${{ matrix.job.debian_platform }}.deb
+          ls -lR
+          export VERSION=$(cat version/version)
+          gh release upload v$VERSION debian-build/nginx-ad-auth_*_${{ matrix.job.debian_platform }}.deb
 
 
