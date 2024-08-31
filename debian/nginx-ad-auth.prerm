@@ -1,0 +1,13 @@
+#!/bin/sh
+set -e
+
+SERVICE=nginx-ad-auth.service
+
+case "$1" in
+    remove|deconfigure)
+	  deb-systemd-invoke stop "${SERVICE}" >/dev/null || true
+	  deb-systemd-invoke disable "${SERVICE}" >/dev/null || true
+	;;
+esac
+
+exit 0

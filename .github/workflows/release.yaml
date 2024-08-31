@@ -58,8 +58,16 @@ jobs:
         steps:
         - name: Get current date
           id: getdate
-          run: echo "::set-output name=getdate::$(date +'%Y.%m.%d-%H%M')"
-        
+          run: |
+            echo "::set-output name=getdate::$(date +'%Y.%m.%d-%H%M')" > version
+            cat version
+
+        - name: Upload version as artifact
+          uses: actions/upload-artifact@v4
+          with:
+            name: version
+            path: version
+
         - uses: actions/checkout@v4
         
         - name: Create Release with gh
@@ -81,3 +89,49 @@ jobs:
             mv windows-386/* release/nginx-ad-auth-windows-386.exe
             mv windows-amd64/* release/nginx-ad-auth-windows-amd64.exe
             gh release upload v${{ steps.getdate.outputs.getdate }} release/*
+
+  deb-package:
+
+    name: debian package - ${{ matrix.job.name }}
+    needs: build
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        job:
+          - { name: "amd64",   debian_platform: "amd64",   crossbuild_package: "" }
+          - { name: "arm64", debian_platform: "arm64",   crossbuild_package: "crossbuild-essential-arm64" }
+
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Create packaging env
+        run: |
+          sudo apt update
+          DEBIAN_FRONTEND=noninteractive sudo apt install -y devscripts build-essential debhelper pkg-config ${{ matrix.job.crossbuild_package }}
+          mkdir -p debian-build/${{ matrix.job.name }}/bin
+
+      - name: Download binaries
+        uses: actions/download-artifact@v4
+
+      - name: Build package for ${{ matrix.job.name }} arch
+        run: |
+          ls -lR
+          export VERSION=$(cat version)
+          cp -v linux-${{ matrix.job.name }}/* debian-build/${{ matrix.job.name }}/bin/
+          chmod -v a+x debian-build/${{ matrix.job.name }}/bin/*
+          cp -vr debian systemd debian-build/${{ matrix.job.name }}/
+          cat debian/control.tpl | sed 's/{{ ARCH }}/${{ matrix.job.debian_platform }}/' > debian-build/${{ matrix.job.name }}/debian/control
+          cd debian-build/${{ matrix.job.name }}/
+          debuild -i -us -uc -b -a${{ matrix.job.debian_platform }}
+
+      - name: Upload Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          export VERSION=$(cat version)
+          gh release upload $VERSION debian-build/rustdesk-server-hbbr_*_${{ matrix.job.debian_platform }}.deb
+
+

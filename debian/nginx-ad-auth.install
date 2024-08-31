@@ -1,0 +1,2 @@
+bin/nginx-ad-auth usr/bin
+systemd/nginx-ad-auth.service lib/systemd/system
