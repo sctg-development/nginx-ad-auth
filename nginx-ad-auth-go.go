@@ -3,6 +3,7 @@
 package main
 
 import (
+	_ "embed"
 	"flag"
 	"fmt"
 	"log"
@@ -21,6 +22,9 @@ var (
 	mailServer     string
 	mailServerPort int
 )
+
+//go:embed "not-found.html"
+var notFoundHTML []byte
 
 // init initializes the application by parsing command line flags and checking environment variables.
 // It sets the values for port, ldapURI, ldapBase, adDomain, mailServer, and mailServerPort.
@@ -60,6 +64,13 @@ func init() {
 
 func main() {
 	http.HandleFunc("/auth", authHandler)
+	// If user hits any other endpoint, return a 404 error with the content of the file not-found.html
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("Not found: %s, IP: %s", r.URL.Path, r.RemoteAddr)
+		w.Header().Set("Content-Type", "text/html")
+		w.WriteHeader(http.StatusNotFound)
+		w.Write(notFoundHTML)
+	})
 	log.Printf("Starting server on port %d", port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), nil))
 }
@@ -77,11 +88,13 @@ func authHandler(w http.ResponseWriter, r *http.Request) {
 	protocol := r.Header.Get("Auth-Protocol")
 
 	if user == "" || pass == "" {
+		log.Printf("No login or password, IP: %s", r.RemoteAddr)
 		http.Error(w, "Auth-Status: No login or password", http.StatusOK)
 		return
 	}
 
 	if authenticated, err := authenticateUser(user, pass); err != nil || !authenticated {
+		log.Printf("Invalid login or password, IP: %s", r.RemoteAddr)
 		http.Error(w, "Auth-Status: Invalid login or password", http.StatusOK)
 		return
 	}
@@ -106,6 +119,7 @@ func authHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Auth-Server", mailServer)
 	w.Header().Set("Auth-Port", strconv.Itoa(authPort))
 	w.WriteHeader(http.StatusOK)
+	log.Printf("Authenticated user: %s, IP: %s", user, r.RemoteAddr)
 }
 
 // authenticateUser is a function that authenticates a user against an Active Directory server.

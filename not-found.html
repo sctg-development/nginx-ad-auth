@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<!--
+Copyright 2024, Ronan LE MEILLAT
+-->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<html lang="en">
+
+<head>
+    <title>404 - Not Found</title>
+    <style>
+        body {
+            background-color: black;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #svg404 {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+
+<body>
+    <svg id="svg404" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+        <style type="text/css">
+            text {
+                font-family: Arial, Helvetica, sans-serif;
+            }
+        </style>
+        <rect width="100%" height="100%" style="fill:black" />
+
+        <text x="165" y="210" font-family="Arial" font-size="60" fill="rgb(255,255,255)">lost</text>
+        <text x="20" y="40" font-family="Arial" font-size="14" fill="rgb(211,211,211)">perdu</text>
+        <text x="60" y="74" font-family="Arial" font-size="18" fill="rgb(169,169,169)">kadonnut</text>
+        <text x="30" y="380" font-family="Arial" font-size="24" fill="rgb(192,192,192)">verloren</text>
+        <text x="288" y="350" font-family="Arial" font-size="20" fill="rgb(128,128,128)">потерянный</text>
+        <text x="220" y="80" font-family="Arial" font-size="12" fill="rgb(105,105,105)">失われた</text>
+        <text x="220" y="320" font-family="Arial" font-size="8" fill="rgb(169,169,169)">สูญหาย</text>
+        <text x="180" y="143" font-family="Arial" font-size="22" fill="rgb(211,211,211)">丢失</text>
+        <text x="260" y="270" font-family="Arial" font-size="10" fill="rgb(105,105,105)">잃어버린</text>
+        <text x="150" y="30" font-family="Arial" font-size="16" fill="rgb(192,192,192)">فقد</text>
+        <text x="30" y="230" font-family="Arial" font-size="18" fill="rgb(169,169,169)">אבד</text>
+        <text x="312" y="180" font-family="Arial" font-size="20" fill="rgb(128,128,128)">χαμένος</text>
+        <text x="40" y="170" font-family="Arial" font-size="24" fill="rgb(105,105,105)">förlorade</text>
+        <text x="140" y="340" font-family="Arial" font-size="18" fill="rgb(192,192,192)">tapt</text>
+        <text x="310" y="100" font-family="Arial" font-size="14" fill="rgb(128,128,128)">tabt</text>
+        <text x="330" y="40" font-family="Arial" font-size="18" fill="rgb(211,211,211)">galduta</text>
+        <text x="40" y="90" font-family="Arial" font-size="12" fill="rgb(169,169,169)">elveszett</text>
+        <text x="80" y="310" font-family="Arial" font-size="20" fill="rgb(192,192,192)">missed</text>
+        <text x="240" y="370" font-family="Arial" font-size="10" fill="rgb(128,128,128)">изгубен</text>
+        <text x="130" y="110" font-family="Arial" font-size="14" fill="rgb(105,105,105)">खो गया</text>
+        <text x="240" y="250" font-family="Arial" font-size="22" fill="rgb(169,169,169)">शेर हो गया</text>
+        <text x="80" y="195" font-family="Arial" font-size="18" fill="rgb(211,211,211)">stracony</text>
+        <text x="270" y="220" font-family="Arial" font-size="10" fill="rgb(105,105,105)">borta</text>
+        <text x="130" y="50" font-family="Arial" font-size="16" fill="rgb(192,192,192)">kayboldu</text>
+        <text x="80" y="270" font-family="Arial" font-size="24" fill="rgb(169,169,169)">tévedt</text>
+        <text x="270" y="150" font-family="Arial" font-size="20" fill="rgb(128,128,128)">vermisst</text>
+        <text x="80" y="130" font-family="Arial" font-size="24" fill="rgb(105,105,105)">perdido</text>
+        <text x="340" y="290" font-family="Arial" font-size="10" fill="rgb(192,192,192)">felizg</text>
+        <text x="240" y="130" font-family="Arial" font-size="14" fill="rgb(128,128,128)">verloren</text>
+    </svg>
+    <script>
+        function resizeSVG() {
+            var svg = document.getElementById('svg404');
+            var size = Math.min(window.innerWidth, window.innerHeight);
+            svg.setAttribute('width', size * 0.8);
+            svg.setAttribute('height', size * 0.8);
+        }
+        window.onresize = resizeSVG;
+        resizeSVG();
+    </script>
+</body>
+
+</html>
