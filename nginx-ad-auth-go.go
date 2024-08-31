@@ -85,16 +85,18 @@ func main() {
 func authHandler(w http.ResponseWriter, r *http.Request) {
 	user := r.Header.Get("Auth-User")
 	pass := r.Header.Get("Auth-Pass")
+	client_ip := r.Header.Get("Client-IP")
+	client_hostname := r.Header.Get("Client-Host")
 	protocol := r.Header.Get("Auth-Protocol")
 
 	if user == "" || pass == "" {
-		log.Printf("No login or password, IP: %s", r.RemoteAddr)
+		log.Printf("No login or password, IP: %s, client IP: %s, cient hostname: %s", r.RemoteAddr, client_ip, client_hostname)
 		http.Error(w, "Auth-Status: No login or password", http.StatusOK)
 		return
 	}
 
 	if authenticated, err := authenticateUser(user, pass); err != nil || !authenticated {
-		log.Printf("Invalid login or password, IP: %s", r.RemoteAddr)
+		log.Printf("Invalid login or password, IP: %s, client IP: %s, cient hostname: %s", r.RemoteAddr, client_ip, client_hostname)
 		http.Error(w, "Auth-Status: Invalid login or password", http.StatusOK)
 		return
 	}
@@ -119,7 +121,7 @@ func authHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Auth-Server", mailServer)
 	w.Header().Set("Auth-Port", strconv.Itoa(authPort))
 	w.WriteHeader(http.StatusOK)
-	log.Printf("Authenticated user: %s, IP: %s", user, r.RemoteAddr)
+	log.Printf("Authenticated user: %s, IP: %s, client IP: %s, cient hostname: %s", user, r.RemoteAddr, client_ip, client_hostname)
 }
 
 // authenticateUser is a function that authenticates a user against an Active Directory server.
