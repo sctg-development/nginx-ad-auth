@@ -31,6 +31,15 @@
    go build -o nginx-ad-auth
    ```
 
+### Test
+
+For testing you can use the provided test file:
+
+```bash
+./nginx-ad-auth -ad-domain ADDOMAIN -ldap-base "dc=ADDOMAIN,dc=WINDOWS" -ldap-uri "ldap://server.addomain.windows" -mail-server 192.168.1.1 -mail-server-port 143 -port 8080
+VALIDUSER="myuser" CORRECTPASSWORD="mypassword" tests/test-nginx-ad-auth.sh
+```
+
 ## Usage
 
 Run the program with the following command:
