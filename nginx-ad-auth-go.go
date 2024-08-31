@@ -7,6 +7,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"net"
 	"net/http"
 	"os"
 	"strconv"
@@ -75,6 +76,15 @@ func main() {
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), nil))
 }
 
+// Get hostname from IP address like dig -x
+func getHostnameFromIP(ip string) string {
+	hostname, err := net.LookupAddr(ip)
+	if err != nil {
+		return ip
+	}
+	return hostname[0]
+}
+
 // authHandler is a function that handles authentication requests.
 // It takes in an http.ResponseWriter and an http.Request as parameters.
 // The function retrieves the user, password, and protocol from the request headers.
@@ -89,14 +99,18 @@ func authHandler(w http.ResponseWriter, r *http.Request) {
 	client_hostname := r.Header.Get("Client-Host")
 	protocol := r.Header.Get("Auth-Protocol")
 
+	if client_hostname == "" {
+		client_hostname = getHostnameFromIP(client_ip)
+	}
+
 	if user == "" || pass == "" {
-		log.Printf("No login or password, IP: %s, client IP: %s, cient hostname: %s", r.RemoteAddr, client_ip, client_hostname)
+		log.Printf("No login or password, nginx IP: %s, client IP: %s, client hostname: %s", r.RemoteAddr, client_ip, client_hostname)
 		http.Error(w, "Auth-Status: No login or password", http.StatusOK)
 		return
 	}
 
 	if authenticated, err := authenticateUser(user, pass); err != nil || !authenticated {
-		log.Printf("Invalid login or password, IP: %s, client IP: %s, cient hostname: %s", r.RemoteAddr, client_ip, client_hostname)
+		log.Printf("Invalid login or password, nginx IP: %s, client IP: %s, client hostname: %s", r.RemoteAddr, client_ip, client_hostname)
 		http.Error(w, "Auth-Status: Invalid login or password", http.StatusOK)
 		return
 	}
@@ -121,7 +135,7 @@ func authHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Auth-Server", mailServer)
 	w.Header().Set("Auth-Port", strconv.Itoa(authPort))
 	w.WriteHeader(http.StatusOK)
-	log.Printf("Authenticated user: %s, IP: %s, client IP: %s, cient hostname: %s", user, r.RemoteAddr, client_ip, client_hostname)
+	log.Printf("Authenticated user: %s, nginx IP: %s, client IP: %s, client hostname: %s", user, r.RemoteAddr, client_ip, client_hostname)
 }
 
 // authenticateUser is a function that authenticates a user against an Active Directory server.
