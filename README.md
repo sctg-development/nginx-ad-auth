@@ -107,25 +107,19 @@ Remember to configure your NGINX Ingress or other ingress controller to route tr
 
 ## Configuring NGINX as an Email Proxy
 
-To configure NGINX as an email proxy to a mail server hosted in a private network at 192.168.1.1:993 via IMAPS, you can use the following NGINX configuration:
+To configure NGINX as an email proxy to a mail server hosted in a private network, you can use the following NGINX configuration:
 
 ```nginx
 mail {
     server_name mail.example.com;
     auth_http localhost:8080/auth;
 
-    imap_capabilities "IMAP4rev1" "UIDPLUS";
-
     server {
         listen 993 ssl;
         protocol imap;
         ssl_certificate /path/to/your/certificate.crt;
         ssl_certificate_key /path/to/your/certificate.key;
-        
-        proxy on;
-        proxy_pass 192.168.1.1:993;
-        proxy_ssl on;
-        proxy_ssl_verify off;
+        imap_capabilities "IMAP4rev1" "UIDPLUS";
     }
 }
 ```
@@ -133,7 +127,7 @@ mail {
 This configuration does the following:
 - Sets up NGINX to listen on port 993 for IMAPS connections.
 - Uses the `nginx-ad-auth` service running on `localhost:8080` for authentication.
-- Proxies authenticated connections to the internal mail server at 192.168.1.1:995.
+- Proxies authenticated connections to the internal mail server at 192.168.1.1:143.
 - Enables SSL for both the client connection and the proxy connection to the internal server.
 
 Remember to replace `/path/to/your/certificate.crt` and `/path/to/your/certificate.key` with the paths to your SSL certificate and key files. Also, ensure that the `auth_http` URL matches the location where your `nginx-ad-auth` service is running.
