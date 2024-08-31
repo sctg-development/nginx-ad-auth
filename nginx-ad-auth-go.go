@@ -63,15 +63,17 @@ func init() {
 	}
 }
 
+// If user hits any other endpoint, return a 404 error with the content of the file not-found.html
+func notFoundHandler(w http.ResponseWriter, r *http.Request) {
+	log.Printf("Not found: %s, IP: %s", r.URL.Path, r.RemoteAddr)
+	w.Header().Set("Content-Type", "text/html")
+	w.WriteHeader(http.StatusNotFound)
+	w.Write(notFoundHTML)
+}
+
 func main() {
 	http.HandleFunc("/auth", authHandler)
-	// If user hits any other endpoint, return a 404 error with the content of the file not-found.html
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("Not found: %s, IP: %s", r.URL.Path, r.RemoteAddr)
-		w.Header().Set("Content-Type", "text/html")
-		w.WriteHeader(http.StatusNotFound)
-		w.Write(notFoundHTML)
-	})
+	http.HandleFunc("/", notFoundHandler)
 	log.Printf("Starting server on port %d", port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), nil))
 }
@@ -109,7 +111,13 @@ func authHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if authenticated, err := authenticateUser(user, pass); err != nil || !authenticated {
+	authenticated, err := authenticateUser(user, pass)
+	if err != nil {
+		log.Printf("Error authenticating user: %v", err)
+		http.Error(w, "Auth-Status: Internal server error", http.StatusInternalServerError)
+		return
+	}
+	if !authenticated {
 		log.Printf("Invalid login or password, nginx IP: %s, client IP: %s, client hostname: %s", r.RemoteAddr, client_ip, client_hostname)
 		http.Error(w, "Auth-Status: Invalid login or password", http.StatusOK)
 		return
@@ -149,7 +157,7 @@ func authHandler(w http.ResponseWriter, r *http.Request) {
 func authenticateUser(username, password string) (bool, error) {
 	l, err := ldap.DialURL(ldapURI)
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("failed to connect to LDAP server: %w", err)
 	}
 	defer l.Close()
 
@@ -168,7 +176,7 @@ func authenticateUser(username, password string) (bool, error) {
 
 	sr, err := l.Search(searchRequest)
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("failed to search LDAP: %w", err)
 	}
 
 	return len(sr.Entries) == 1, nil
