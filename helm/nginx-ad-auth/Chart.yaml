@@ -1,0 +1,9 @@
+# Chart.yaml
+# Copyright (c) 2022-2024 Ronan LE MEILLAT
+# This program is licensed under the AGPLv3 license.
+apiVersion: v2
+name: nginx-ad-auth
+description: A Helm chart for deploying nginx-ad-auth
+version: 0.1.0
+appVersion: "1.0.0"
+icon: https://avatars.githubusercontent.com/u/165936401?v=4

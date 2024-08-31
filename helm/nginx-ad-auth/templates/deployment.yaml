@@ -1,0 +1,29 @@
+# templates/deployment.yaml
+# Copyright (c) 2022-2024 Ronan LE MEILLAT
+# This program is licensed under the AGPLv3 license.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "nginx-ad-auth.fullname" . }}
+  labels:
+    {{- include "nginx-ad-auth.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "nginx-ad-auth.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "nginx-ad-auth.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          env:
+            {{- toYaml .Values.env | nindent 12 }}

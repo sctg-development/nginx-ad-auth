@@ -1,0 +1,30 @@
+# values.yaml
+# Copyright (c) 2022-2024 Ronan LE MEILLAT
+# This program is licensed under the AGPLv3 license.
+replicaCount: 1
+
+image:
+  repository: your-docker-registry/nginx-ad-auth
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: true
+  annotations: {}
+  host: nginx-ad-auth.example.com
+  clusterIssuer: "letsencrypt-cloudflare"
+env:
+  - name: NGINX_AUTH_LDAP_URI
+    value: "ldap://your-ad-server"
+  - name: NGINX_AUTH_LDAP_BASE
+    value: "dc=example,dc=com"
+  - name: NGINX_AUTH_AD_DOMAIN
+    value: "EXAMPLE"
+  - name: NGINX_AUTH_MAIL_SERVER
+    value: "mail.example.com"
+  - name: NGINX_AUTH_MAIL_SERVER_PORT
+    value: "143"

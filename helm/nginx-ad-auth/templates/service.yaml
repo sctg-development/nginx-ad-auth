@@ -1,0 +1,18 @@
+# templates/service.yaml
+# Copyright (c) 2022-2024 Ronan LE MEILLAT
+# This program is licensed under the AGPLv3 license.
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "nginx-ad-auth.fullname" . }}
+  labels:
+    {{- include "nginx-ad-auth.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "nginx-ad-auth.selectorLabels" . | nindent 4 }}
