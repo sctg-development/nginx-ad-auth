@@ -1,0 +1,20 @@
+
+[Unit]
+Description=Authenticates users against Active Directory using LDAP for nginx
+
+[Service]
+Type=simple
+LimitNOFILE=1000000
+ExecStart=/usr/bin/nginx-ad-auth -ad-domain ADDOMAIN -ldap-base "dc=ADDOMAIN,dc=WINDOWS" -ldap-uri "ldap://server.addomain.windows" -mail-server 192.168.1.1 -mail-server-port 143 -port 8080
+WorkingDirectory=/var/log/nginx-ad-auth/
+User=
+Group=
+Restart=always
+StandardOutput=append:/var/log/nginx-ad-auth/nginx-ad-auth.log
+StandardError=append:/var/log/nginx-ad-auth/nginx-ad-auth.error
+# Restart service after 10 seconds if node service crashes
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+

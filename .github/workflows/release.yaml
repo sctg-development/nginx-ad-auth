@@ -93,7 +93,7 @@ jobs:
   deb-package:
 
     name: debian package - ${{ matrix.job.name }}
-    needs: build
+    needs: create-release
     runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
@@ -119,8 +119,9 @@ jobs:
       - name: Build package for ${{ matrix.job.name }} arch
         run: |
           ls -lR
-          export VERSION=$(cat version)
-          cp -v linux-${{ matrix.job.name }}/* debian-build/${{ matrix.job.name }}/bin/
+          export VERSION=$(cat version/version)
+          echo "Building package for ${{ matrix.job.name }} arch with version $VERSION"
+          cp -v linux-${{ matrix.job.name }}/* debian-build/${{ matrix.job.name }}/bin/nginx-ad-auth
           chmod -v a+x debian-build/${{ matrix.job.name }}/bin/*
           cp -vr debian systemd debian-build/${{ matrix.job.name }}/
           cat debian/control.tpl | sed 's/{{ ARCH }}/${{ matrix.job.debian_platform }}/' > debian-build/${{ matrix.job.name }}/debian/control
