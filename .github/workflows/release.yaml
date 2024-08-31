@@ -59,7 +59,8 @@ jobs:
         - name: Get current date
           id: getdate
           run: |
-            echo "::set-output name=getdate::$(date +'%Y.%m.%d-%H%M')" > version
+            echo "$(date +'%Y.%m.%d-%H%M')" > version
+            echo "::set-output name=getdate::$(cat version)"
             cat version
 
         - name: Upload version as artifact
@@ -133,6 +134,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           export VERSION=$(cat version)
-          gh release upload $VERSION debian-build/rustdesk-server-hbbr_*_${{ matrix.job.debian_platform }}.deb
+          gh release upload v$VERSION debian-build/rustdesk-server-hbbr_*_${{ matrix.job.debian_platform }}.deb
 
 
