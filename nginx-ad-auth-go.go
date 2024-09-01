@@ -3,6 +3,7 @@
 package main
 
 import (
+	"crypto/tls"
 	_ "embed"
 	"flag"
 	"fmt"
@@ -161,8 +162,16 @@ func authenticateUser(username, password string) (bool, error) {
 	}
 	defer l.Close()
 
+	// Reconnect with TLS
+	err = l.StartTLS(&tls.Config{InsecureSkipVerify: true})
+	if err != nil {
+		// If the server does not support StartTLS, return an error
+		return false, fmt.Errorf("failed to start TLS: %w", err)
+	}
+
 	err = l.Bind(fmt.Sprintf("%s\\%s", adDomain, username), password)
 	if err != nil {
+		log.Printf("Failed to bind to LDAP: %v", err)
 		return false, nil
 	}
 

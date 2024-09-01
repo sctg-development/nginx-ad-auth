@@ -5,5 +5,5 @@ apiVersion: v2
 name: nginx-ad-auth
 description: A Helm chart for deploying nginx-ad-auth
 version: 0.1.0
-appVersion: "1.0.0"
+appVersion: "1.2.1"
 icon: https://avatars.githubusercontent.com/u/165936401?v=4
